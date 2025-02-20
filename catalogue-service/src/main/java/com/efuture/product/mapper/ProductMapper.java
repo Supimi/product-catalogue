@@ -1,6 +1,7 @@
 package com.efuture.product.mapper;
 
 import com.efuture.product.dto.CreateProductRequest;
+import com.efuture.product.dto.ProductCreationEvent;
 import com.efuture.product.dto.ProductInformation;
 import com.efuture.product.dto.UpdateProductRequest;
 import com.efuture.product.entity.Product;
@@ -29,4 +30,7 @@ public interface ProductMapper {
     void mapUpdateRequestToProduct(UpdateProductRequest dto, @MappingTarget Product product);
 
     List<ProductInformation> mapToProductInformationList(List<Product> productList);
+
+    @Mapping(target = "productId", source = "id")
+    ProductCreationEvent mapToProductCreationEvent(Product product);
 }

@@ -1,6 +1,7 @@
 package com.efuture.product.service;
 
 import com.efuture.product.dto.CreateProductRequest;
+import com.efuture.product.dto.ProductCreationEvent;
 import com.efuture.product.dto.ProductInformation;
 import com.efuture.product.dto.UpdateProductRequest;
 import com.efuture.product.entity.Product;
@@ -32,10 +33,13 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
+    private final KafkaProducerService kafkaProducerService;
 
-    public ProductService(ProductRepository productRepository, ProductMapper productMapper) {
+    public ProductService(ProductRepository productRepository, ProductMapper productMapper,
+                          KafkaProducerService kafkaProducerService) {
         this.productRepository = productRepository;
         this.productMapper = productMapper;
+        this.kafkaProducerService = kafkaProducerService;
     }
 
     public Response<ProductInformation> createProduct(CreateProductRequest createProductRequest) {
@@ -44,6 +48,8 @@ public class ProductService {
         product.setStatus(ACTIVE.getValue());
         Product saved = productRepository.save(product);
         ProductInformation productInformation = productMapper.mapToProductInformation(saved);
+        ProductCreationEvent event = productMapper.mapToProductCreationEvent(saved);
+        kafkaProducerService.sendMessage(event);
         return Response.<ProductInformation>builder()
                 .status(STATUS_CREATED)
                 .message(SUCCESS)
