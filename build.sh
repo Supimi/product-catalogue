@@ -3,7 +3,7 @@
 #build all modules
 mvn clean install
 # Define the module directories
-modules=("catalogue-service")
+modules=("catalogue-service" "notification-service")
 
 # Loop through modules and build Docker images
 for module in "${modules[@]}"; do
