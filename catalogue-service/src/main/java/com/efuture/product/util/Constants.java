@@ -6,7 +6,8 @@ import java.math.BigDecimal;
 
 public class Constants {
     public static final BigDecimal PREMIUM_PRODUCT_PRICE_LIMIT = new BigDecimal(500);
-    public static final String KAFKA_BOOTSTRAP_SERVERS = "kafka:9092";
+    public static final String KAFKA_BOOTSTRAP_SERVERS = "localhost:29092";
+
     public static final String CARD_EVENT_TOPIC = "product-topic";
 
     public static class ResponseCodes {

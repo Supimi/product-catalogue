@@ -54,25 +54,4 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
-//    @ExceptionHandler(MethodArgumentNotValidException.class)
-//    public ResponseEntity<Response<String>> handleMethodArgumentNotValidException(
-//            MethodArgumentNotValidException ex, WebRequest request) {
-//
-//        List<String> errors = new ArrayList<>();
-//        ex.getBindingResult().getAllErrors()
-//                .forEach((error) -> {
-//                    String field = ((FieldError) error).getField();
-//                    String errorMessage = error.getDefaultMessage();
-//                    errors.add(field + ": " + errorMessage);
-//                });
-//
-//        Response<String> response = Response.<String>builder()
-//                .status(STATUS_BAD_REQUEST)
-//                .message(ex.getMessage())
-//                .data(String.join(",", errors))
-//                .build();
-//
-//        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-//    }
-
 }

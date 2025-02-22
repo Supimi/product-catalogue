@@ -1,0 +1,44 @@
+spring:
+  main:
+    web-application-type: reactive
+  application:
+    name: edge-service
+  lifecycle:
+    timeout-per-shutdown-phase: 15s
+  cloud:
+    gateway:
+      default-filters:
+        - SaveSession
+        - TokenRelay
+      routes:
+        - id: catalogue-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/products/**
+      httpclient:
+        connect-timeout: 2000
+        response-timeout: 5s
+        pool:
+          type: elastic
+          max-idle-time: 15s
+          max-life-time: 60s
+
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: edge-service
+            client-secret: E98Ns1bON92xbQ7pmsGh2Jws7krgu9Oi
+            scope: openid,roles
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8080/realms/efuture-productx
+
+
+server:
+  port: 9000
+  netty:
+    connection-timeout: 2s
+    idle-timeout: 15s
+  shutdown: graceful
