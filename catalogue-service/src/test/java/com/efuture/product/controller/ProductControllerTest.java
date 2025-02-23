@@ -190,4 +190,67 @@ class ProductControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized()); // Should fail without authentication
     }
+
+    @Test
+    void validateCreateProduct_emptyProductName() throws Exception {
+        CreateProductRequest request = new CreateProductRequest("", "p1", 10, "category1");
+        ProductInformation productInformation = new ProductInformation();
+        Response<ProductInformation> response = new Response<>(201, "SUCCESS", productInformation);
+
+        when(productService.createProduct(any(CreateProductRequest.class))).thenReturn(response);
+
+        mockMvc.perform(post("/api/products")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)) // Sample JSON body
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(SecurityMockMvcRequestPostProcessors.jwt()
+                                .authorities(new SimpleGrantedAuthority("ROLE_Admin")))
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value("Validation failed"))
+                .andExpect(jsonPath("$.data").value("name: Product name is mandatory"));
+    }
+
+    @Test
+    void validateCreateProduct_emptyCategoryName() throws Exception {
+        CreateProductRequest request = new CreateProductRequest("product1", "p1", 10, "");
+        ProductInformation productInformation = new ProductInformation();
+        Response<ProductInformation> response = new Response<>(201, "SUCCESS", productInformation);
+
+        when(productService.createProduct(any(CreateProductRequest.class))).thenReturn(response);
+
+        mockMvc.perform(post("/api/products")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)) // Sample JSON body
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(SecurityMockMvcRequestPostProcessors.jwt()
+                                .authorities(new SimpleGrantedAuthority("ROLE_Admin")))
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value("Validation failed"))
+                .andExpect(jsonPath("$.data").value("category: Product category is mandatory"));
+    }
+
+    @Test
+    void validateCreateProduct_negativePrice() throws Exception {
+        CreateProductRequest request = new CreateProductRequest("product1", "p1", -10, "category1");
+        ProductInformation productInformation = new ProductInformation();
+        Response<ProductInformation> response = new Response<>(201, "SUCCESS", productInformation);
+
+        when(productService.createProduct(any(CreateProductRequest.class))).thenReturn(response);
+
+        mockMvc.perform(post("/api/products")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)) // Sample JSON body
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(SecurityMockMvcRequestPostProcessors.jwt()
+                                .authorities(new SimpleGrantedAuthority("ROLE_Admin")))
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value("Validation failed"))
+                .andExpect(jsonPath("$.data").value("price: Price value should be grater than or equal to zero"));
+    }
 }
