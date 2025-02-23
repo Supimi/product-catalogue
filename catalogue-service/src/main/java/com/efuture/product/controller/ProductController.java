@@ -29,11 +29,6 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @GetMapping
-    public String health() {
-        return "SUCCESS";
-    }
-
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public Response<ProductInformation> createProduct(
